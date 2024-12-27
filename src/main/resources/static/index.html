@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Plus Calculator</title>
+</head>
+<body>
+<h1>Plus Calculator</h1>
+<input type="number" id="num1" placeholder="Enter first number"> +
+<input type="number" id="num2" placeholder="Enter second number">
+<button id="calculate">plus</button>
+<input type="number" id="result" placeholder="Result" readonly>
+<script>
+    document.getElementById('calculate').addEventListener('click', async () => {
+        // Get input values
+        const num1 = parseInt(document.getElementById('num1').value, 10);
+        const num2 = parseInt(document.getElementById('num2').value, 10);
+
+        // Validate inputs
+        if (isNaN(num1) || isNaN(num2)) {
+            alert("Please enter valid numbers.");
+            return;
+        }
+
+        // Prepare the payload
+        const payload = {
+            num1: { num: num1 },
+            num2: { num: num2 }
+        };
+
+        try {
+            // Send POST request to the API
+            const response = await fetch('http://localhost:8080/api/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            // Parse response
+            if (!response.ok) {
+                throw new Error("Failed to fetch the API");
+            }
+            const data = await response.json();
+
+            // Display result
+            document.getElementById('result').value = data.num;
+        } catch (error) {
+            console.error("Error:", error);
+            alert("An error occurred. Please try again.");
+        }
+    });
+</script>
+
+</body>
+</html>

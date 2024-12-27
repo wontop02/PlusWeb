@@ -1,6 +1,8 @@
 package org.example.plusweb.controller;
 
+import org.example.plusweb.model.NumRequest;
 import org.example.plusweb.model.Num;
+import org.example.plusweb.model.NumRequest;
 import org.example.plusweb.service.NumberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -17,9 +19,9 @@ public class NumApiController {
 
     @PostMapping("/add")
     public Num Plus(
-        @RequestBody Num num
-    ){
-        return numberService.Plus(num.getNum1(), num.getNum2());
+        @RequestBody NumRequest numRequest
+        ){
+        return new Num(numberService.Plus(numRequest.getNum1(), numRequest.getNum2()));
     }
 
 }
