@@ -6,51 +6,64 @@
 </head>
 <body>
 <h1>Plus Calculator</h1>
-<input type="number" id="num1" placeholder="Enter first number"> +
+<input type="number" id="num1" placeholder="Enter first number"> +  <!--사용자 입력을 받을 변수에 아이디 지정-->
 <input type="number" id="num2" placeholder="Enter second number">
-<button id="calculate">plus</button>
-<input type="number" id="result" placeholder="Result" readonly>
-<script>
-    document.getElementById('calculate').addEventListener('click', async () => {
-        // Get input values
-        const num1 = parseInt(document.getElementById('num1').value, 10);
-        const num2 = parseInt(document.getElementById('num2').value, 10);
+<button id="calculate">plus</button> <!--버튼에 아이디 지정-->
+    <input type="number" id="result" placeholder="Result" readonly> <!--반환할 변수에 아이디 지정-->
+<script> <!--자바스크립트-->
+    document.getElementById('calculate').addEventListener('click', async () => { //calculate라는 id에 event 추가
+        const num1 = parseInt(document.getElementById('num1').value, 10); //웹 페이지에 존재하는 HTML 요소에 접근하려면 document 객체 사용
+        const num2 = parseInt(document.getElementById('num2').value, 10); //document는 웹 자체를 의미
+        //onclick()과 addEventListener ('click', funtion(){})의 차이
+        //onclick은 이벤트 여러 개 적용 불가. 이미 사용한 상태에서 새 onclick 이벤트 추가하면 추가된 게 기존 걸 덮어씀
+        //addEventListener는 한 click에 여러 event가 실행될 수 있음, 대신 오래된 브라우저는 호환 불가
 
-        // Validate inputs
-        if (isNaN(num1) || isNaN(num2)) {
+        if (isNaN(num1) || isNaN(num2)) { //Nat: Not a Number
             alert("Please enter valid numbers.");
             return;
         }
 
-        // Prepare the payload
-        const payload = {
-            num1: { num: num1 },
-            num2: { num: num2 }
+        const payload = {   //payload는 전송되는 데이터 의미. Http 요청을 보낼 때, 요청 안에 들어가는 데이터
+            //JSON 형식의 데이터, 이미지, 텍스트, 파일 등 다양한 형태. 데이터가 url에 노출되지 않음
+            //const는 변수 선언 키워드
+            num1: { num: num1 }, //payload 객체의 첫 번째 속성. 키가 num1, 값은 또다른 객체인 {num: num1}
+            num2: { num: num2 } //backend에서 해당 데이터를 객체로 처리하도록 설계했기 때문에 객체로 받음. num은 객체 속성 이름
+            //payload의 키값(앞의 num1, num2)는 백엔드 객체(NumRequest)의 속성과 변수이름이 같아야 쉽게 매핑 가능.
         };
 
         try {
-            // Send POST request to the API
-            const response = await fetch('http://localhost:8080/api/add', {
+            const response = await fetch('http://localhost:8080/api/add', { //이 주소에 post 요청을 보냄
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(payload)
-            });
+                body: JSON.stringify(payload) //POST 요청 본문으로 전송할 데이터
+            }); //response 객체에는 POST 요청에 대한 서버의 응답이 들어감, 하지만 단순한 응답 객체이기 때문에
+                //요청에 대한 body는 직접적으로 접근 불가.
+            //response 객체의 구성 요소: ok, status(HTTP 상태코드. 숫자), statusText,
+            //body(응답 본문에 접근할 수 있는 ReadableStream) 등
 
             // Parse response
             if (!response.ok) {
                 throw new Error("Failed to fetch the API");
             }
-            const data = await response.json();
+            const data = await response.json(); //응답 객체의 본문 데이터를 JSON으로 파싱. body 데이터 실제로 사용 가능
 
             // Display result
-            document.getElementById('result').value = data.num;
+            document.getElementById('result').value = data.num; //응답 데이터 객체에서 num이라는 속성에 접근
         } catch (error) {
             console.error("Error:", error);
             alert("An error occurred. Please try again.");
         }
     });
+        //백엔드 파일과 프론트엔드가 같은 파일에 있어야 할 필요는 없음, 백엔드는 서버환경에서 실행, 프론트엔드는 브라우저에서 실행
+        //하지만 현재는 localhost라는 컴퓨터의 로컬 환경에서 실행되므로 두 파일 모두 가지고 있어야 함
+        //만약 백엔드 서버가 localhost가 아니라면 나에게 프론트엔드 코드만 있어도 실행 가능.
+        //localhost:8080으로 안 열고 intellij에 뜨는 버튼을 눌러 웹을 열면 작동을 안 한다~
+        //왜 localhost:8080/api/add가 아니라 localhost:8080에서 열어야 하는가.
+        //-> 로컬호스트는 백엔드 서버의 기본 주소, 이 주소에서 API 엔드포인트(api/add)를 처리하는 것
+        //API 엔드포인트란 API가 제공하는 특정 기능이나 데이터를 처리하는 URL 주소.
+        //프론트엔드에서 두 숫자를 더하는 요청을 http://localhost:8080/api/add로 보내면, 백엔드 서버에서 요청을 받아 처리한 후 결과를 응답으로 보냄
 </script>
 
 </body>
