@@ -32,10 +32,12 @@ public class NumApiController {
         return result;
     }
 
-    @GetMapping("/history")
-    public List<HistoryDto> getAllHistory() {
+    @GetMapping("/history") public List<HistoryDto> getAllHistory() throws Exception {
         var history_list = historyService.getAllHistory();
         log.info("history list: {}", history_list);
+        if (history_list == null){
+            throw new Exception("예외 발생");
+        }
         return history_list;
     }
 
