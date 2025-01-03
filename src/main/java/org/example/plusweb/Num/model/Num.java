@@ -1,4 +1,4 @@
-package org.example.plusweb.model;
+package org.example.plusweb.Num.model;
 
 public class Num {
     private Integer num;

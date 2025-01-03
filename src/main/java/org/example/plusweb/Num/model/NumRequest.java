@@ -1,4 +1,4 @@
-package org.example.plusweb.model;
+package org.example.plusweb.Num.model;
 
 public class NumRequest {
     private Num num1;
